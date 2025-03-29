@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node backend/index.js",
-    "heroku-postbuild": "cd frontend && npm install && npm run build"
+    "heroku-postbuild": "npm install --prefix backend && cd frontend && npm install && npm run build"
   },
   "engines": {
     "node": "20.x"
