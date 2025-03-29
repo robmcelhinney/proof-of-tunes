@@ -26,7 +26,6 @@ backend/cache
 # Circom outputs
 *.circom.json
 circom/
-circuits/
 build/
 top_artists.*
 top_listener.*
