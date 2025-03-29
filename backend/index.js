@@ -4,13 +4,17 @@ const axios = require("axios")
 const cors = require("cors")
 const dotenv = require("dotenv")
 const { ethers } = require("ethers")
+const mime = require("mime")
 
 dotenv.config()
 
 const app = express()
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, "../frontend/build")))
+// Ensure correct MIME types
+express.static.mime.define({
+    "application/wasm": ["wasm"],
+    "application/octet-stream": ["zkey"],
+})
 
 app.use(
     cors({
@@ -23,10 +27,6 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
-        cookie: {
-            secure: true,
-            sameSite: "None",
-        },
     })
 )
 
@@ -113,6 +113,15 @@ app.get("/api/top-artists", (req, res) => {
 
 // Then serve the rest of the React build
 app.use(express.static(path.join(__dirname, "../frontend/build")))
+
+app.use("/top_artists.wasm", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/build/top_artists.wasm"))
+})
+app.use("/top_artists_final.zkey", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "../frontend/build/top_artists_final.zkey")
+    )
+})
 
 // Catch-all fallback AFTER static serving
 app.get("*", (req, res) => {
