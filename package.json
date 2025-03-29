@@ -1,5 +1,13 @@
 {
-  "name": "hardhat-project",
+  "name": "proof-of-tunes",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node backend/index.js",
+    "heroku-postbuild": "cd frontend && npm install && npm run build"
+  },
+  "engines": {
+    "node": "20.x"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "circomlibjs": "^0.1.7",
