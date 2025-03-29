@@ -29,7 +29,7 @@ Proof of Tunes lets users cryptographically prove their top Spotify artists — 
 
 ## 🧠 Zero-Knowledge Circuit
 
-Located in [`top_artists.circom`](./top_artists.circom), the circuit proves you know the plaintext of 3 artist names whose hashes match public inputs, without revealing the names during proof generation.
+Located in [`top_artists.circom`](./circuits/top_artists.circom), the circuit proves you know the plaintext of 3 artist names whose hashes match public inputs, without revealing the names during proof generation.
 
 ---
 
