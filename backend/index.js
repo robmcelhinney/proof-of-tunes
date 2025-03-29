@@ -107,8 +107,6 @@ app.get("/api/top-artists", (req, res) => {
     }
 })
 
-app.use("/zk", express.static(path.join(__dirname, "../frontend/build/zk")))
-
 // Then serve the rest of the React build
 app.use(express.static(path.join(__dirname, "../frontend/build")))
 
