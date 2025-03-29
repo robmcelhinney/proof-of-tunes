@@ -143,8 +143,8 @@ function App() {
 
         const { proof, publicSignals } = await snarkjs.groth16.fullProve(
             input,
-            process.env.PUBLIC_URL + "/top_artists.wasm",
-            process.env.PUBLIC_URL + "/top_artists_final.zkey"
+            "/top_artists.wasm",
+            "/top_artists_final.zkey"
         )
 
         setProofData({ proof, publicSignals })

@@ -9,6 +9,9 @@ dotenv.config()
 
 const app = express()
 
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, "../frontend/build")))
+
 app.use(
     cors({
         origin: process.env.FRONTEND_URI,
