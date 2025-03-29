@@ -1,0 +1,54 @@
+# Global node ignores
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# Local env + credentials
+.env
+.env.*
+frontend/.env
+backend/.env
+backend/cache
+
+# Build / compilation artifacts
+*.zkey
+*.r1cs
+*.sym
+*.wasm
+*.ptau
+*.pkl
+*.json.aux
+*.ptau
+
+# Circom outputs
+*.circom.json
+circom/
+circuits/
+build/
+top_artists.*
+top_listener.*
+
+# Cache / session
+.cache/
+backend/cache/
+hardhat_cache/
+cache/
+artifacts/
+coverage/
+coverage.json
+
+# IDE noise
+.DS_Store
+.vscode/
+*.code-workspace
+
+# OS noise
+Thumbs.db
+ehthumbs.db
+*.Zone.Identifier
+
+# Ignition
+ignition/deployments/chain-31337
