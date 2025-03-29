@@ -125,7 +125,7 @@ function App() {
 
     const handleLogin = () => {
         // Redirect to backend login endpoint
-        window.location.href = "http://localhost:5000/login"
+        window.location.href = `${API_BASE}/login`
     }
 
     const generateProof = async () => {
