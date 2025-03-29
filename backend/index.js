@@ -4,7 +4,6 @@ const axios = require("axios")
 const cors = require("cors")
 const dotenv = require("dotenv")
 const { ethers } = require("ethers")
-const mime = require("mime")
 
 dotenv.config()
 
@@ -14,6 +13,23 @@ const app = express()
 express.static.mime.define({
     "application/wasm": ["wasm"],
     "application/octet-stream": ["zkey"],
+})
+
+app.use((req, res, next) => {
+    res.setHeader(
+        "Content-Security-Policy",
+        "default-src 'self'; " +
+            "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; " +
+            "worker-src 'self' blob:; " +
+            "style-src 'self' 'unsafe-inline'; " +
+            "img-src 'self' data: https:; " +
+            "connect-src 'self' https://accounts.spotify.com https://api.spotify.com; " +
+            "font-src 'self'; " +
+            "media-src 'self'; " +
+            "frame-src 'self'; " +
+            "object-src 'none';"
+    )
+    next()
 })
 
 app.use(
@@ -111,17 +127,20 @@ app.get("/api/top-artists", (req, res) => {
     }
 })
 
+const publicDir = path.join(__dirname, "public")
+
+app.get("/zk/top_artists.wasm", (req, res) => {
+    res.setHeader("Content-Type", "application/wasm")
+    res.sendFile(path.join(__dirname, "public", "zk", "top_artists.wasm"))
+})
+
+app.get("/zk/top_artists_final.zkey", (req, res) => {
+    res.setHeader("Content-Type", "application/octet-stream")
+    res.sendFile(path.join(__dirname, "public", "zk", "top_artists_final.zkey"))
+})
+
 // Then serve the rest of the React build
 app.use(express.static(path.join(__dirname, "../frontend/build")))
-
-app.use("/top_artists.wasm", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/build/top_artists.wasm"))
-})
-app.use("/top_artists_final.zkey", (req, res) => {
-    res.sendFile(
-        path.join(__dirname, "../frontend/build/top_artists_final.zkey")
-    )
-})
 
 // Catch-all fallback AFTER static serving
 app.get("*", (req, res) => {

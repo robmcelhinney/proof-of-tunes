@@ -14,10 +14,8 @@ backend/.env
 backend/cache
 
 # Build / compilation artifacts
-*.zkey
 *.r1cs
 *.sym
-*.wasm
 *.ptau
 *.pkl
 *.json.aux
@@ -27,8 +25,7 @@ backend/cache
 *.circom.json
 circom/
 build/
-top_artists.*
-top_listener.*
+top_artists_0000.zkey
 
 # Cache / session
 .cache/
