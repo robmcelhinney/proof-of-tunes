@@ -107,6 +107,18 @@ app.get("/api/top-artists", (req, res) => {
     }
 })
 
-app.listen(5000, () =>
-    console.log("✅ Backend running at http://localhost:5000")
-)
+app.use("/zk", express.static(path.join(__dirname, "../frontend/build/zk")))
+
+// Then serve the rest of the React build
+app.use(express.static(path.join(__dirname, "../frontend/build")))
+
+// Catch-all fallback AFTER static serving
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/build", "index.html"))
+})
+
+// Start the server
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`)
+})
