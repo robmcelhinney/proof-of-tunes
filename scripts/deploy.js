@@ -4,7 +4,7 @@ async function main() {
     console.log("Deploying contracts with account:", deployer.address)
 
     const ZKBadgeNFT = await ethers.getContractFactory("ZKBadgeNFT")
-    const verifierAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" // update with your deployed verifier address
+    const verifierAddress = "0x5ffFf0bE7f001b1167a2Ac9237Cc9aec8a2E68f2" // update with your deployed verifier address
 
     const zkBadgeNFT = await ZKBadgeNFT.deploy(verifierAddress)
     await zkBadgeNFT.waitForDeployment()

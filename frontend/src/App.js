@@ -135,11 +135,11 @@ function App() {
             artist3Hash: zkInput.hash3.toString(),
         }
 
-        // console.log("Expected public signals (hashes):", [
-        //     zkInput.hash1.toString(),
-        //     zkInput.hash2.toString(),
-        //     zkInput.hash3.toString(),
-        // ])
+        console.log("Expected public signals (hashes):", [
+            zkInput.hash1.toString(),
+            zkInput.hash2.toString(),
+            zkInput.hash3.toString(),
+        ])
 
         const { proof, publicSignals } = await snarkjs.groth16.fullProve(
             input,
@@ -154,11 +154,23 @@ function App() {
         })
     }
 
+    const BASE_SEPOLIA_CHAIN_ID = "0x14A34" // Hex of 84532
+
     const mintBadge = async () => {
         try {
             const provider = new BrowserProvider(window.ethereum)
             const signer = await provider.getSigner()
 
+            // 1. Ensure user is connected to Base Sepolia
+            const { chainId } = await provider.getNetwork()
+            if (chainId !== parseInt(BASE_SEPOLIA_CHAIN_ID, 16)) {
+                await window.ethereum.request({
+                    method: "wallet_switchEthereumChain",
+                    params: [{ chainId: BASE_SEPOLIA_CHAIN_ID }],
+                })
+            }
+
+            // 2. Continue with mint logic
             const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
             const contract = new Contract(
                 CONTRACT_ADDRESS,
@@ -168,7 +180,10 @@ function App() {
             const { proof, publicSignals } = proofData
 
             const a = proof.pi_a.slice(0, 2)
-            const b = [proof.pi_b[0].slice(0, 2), proof.pi_b[1].slice(0, 2)]
+            const b = [
+                [proof.pi_b[0][1], proof.pi_b[0][0]],
+                [proof.pi_b[1][1], proof.pi_b[1][0]],
+            ]
             const c = proof.pi_c.slice(0, 2)
 
             const monthYear = getCurrentMonthYear()
@@ -185,11 +200,16 @@ function App() {
                 type: "info",
                 message: "Transaction submitted, waiting for confirmation...",
             })
+            const publicSignalsBN = publicSignals.map((x) => BigInt(x))
+
+            console.log("publicSignalsBN (frontend):", publicSignalsBN)
+            console.log("Expected zkInput.artist1:", zkInput.artist1)
+
             const tx = await contract.mintBadge(
                 a,
                 b,
                 c,
-                publicSignals,
+                publicSignalsBN,
                 zkInput.artist1,
                 zkInput.artist2,
                 zkInput.artist3,
@@ -221,7 +241,6 @@ function App() {
                 type: "success",
                 message: `Mint successful! Tx: ${tx.hash.substring(0, 10)}...`,
             })
-            // Clear proof data for new interactions.
             setProofData(null)
         } catch (error) {
             console.error("Minting failed:", error)
