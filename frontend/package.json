@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@react-hook/window-size": "^3.1.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -13,7 +12,6 @@
     "ethers": "^6.13.5",
     "poseidon-lite": "^0.3.0",
     "react": "^19.0.0",
-    "react-confetti": "^6.4.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
     "snarkjs": "^0.7.5",

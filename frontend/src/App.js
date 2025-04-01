@@ -5,7 +5,6 @@ import * as snarkjs from "snarkjs"
 import { keccak256, toUtf8Bytes, BrowserProvider, Contract } from "ethers"
 import ZKBadgeNFT_ABI from "./abi/ZKBadgeNFT.json"
 import confetti from "canvas-confetti"
-import { useWindowSize } from "@react-hook/window-size" // install this too!
 
 const SNARK_FIELD = BigInt(
     "21888242871839275222246405745257275088548364400416034343698204186575808495617"
