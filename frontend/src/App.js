@@ -22,12 +22,14 @@ function getCurrentMonthYear() {
     }) // e.g. "March 2025"
 }
 
-function generateTokenURI(a1, a2, a3, monthYear) {
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000"
+
+function generateTokenSVG(a1, a2, a3, monthYear) {
     const svg = generateSVG(a1, a2, a3, monthYear)
     const svgBase64 = window.btoa(unescape(encodeURIComponent(svg)))
     const metadata = {
         name: `Top Listener Badge - ${monthYear}`,
-        description: "Verified top 3 Spotify artists using ZK.",
+        description: "Verified top 3 artists.",
         image: `data:image/svg+xml;base64,${svgBase64}`,
         attributes: [
             { trait_type: "Month", value: monthYear },
@@ -187,14 +189,14 @@ function App() {
             const c = proof.pi_c.slice(0, 2)
 
             const monthYear = getCurrentMonthYear()
-            const uri = generateTokenURI(
+            const svg = generateSVG(
                 zkInput.artist1,
                 zkInput.artist2,
                 zkInput.artist3,
                 monthYear
             )
 
-            console.log("uri: ", uri)
+            console.log("svg: ", svg)
 
             setNotification({
                 type: "info",
@@ -213,16 +215,21 @@ function App() {
                 zkInput.artist1,
                 zkInput.artist2,
                 zkInput.artist3,
-                uri,
+                svg,
                 monthYear
             )
             console.log("Transaction submitted:", tx.hash)
             const receipt = await tx.wait()
             console.log("Transaction mined:", receipt)
             setMintedTx(tx.hash)
-            const base64 = uri.split(",")[1]
+            const siteSVG = generateTokenSVG(
+                zkInput.artist1,
+                zkInput.artist2,
+                zkInput.artist3,
+                monthYear
+            )
+            const base64 = siteSVG.split(",")[1]
             const metadata = JSON.parse(atob(base64))
-
             setMintedNFT({
                 image: metadata.image,
                 name: metadata.name,
@@ -303,7 +310,7 @@ function App() {
                             onClick={mintBadge}
                             className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded mb-4"
                         >
-                            Mint Badge NFT
+                            Mint ProofofTunes NFT
                         </button>
                     )}
                 </>
@@ -315,7 +322,7 @@ function App() {
                     <p>
                         Transaction:{" "}
                         <a
-                            href={`https://etherscan.io/tx/${mintedTx}`}
+                            href={`https://basescan.org/tx/${mintedTx}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-400 underline"
@@ -329,7 +336,7 @@ function App() {
                             <a
                                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
                                     "Check out my new Top Listener Badge NFT! " +
-                                        `https://etherscan.io/tx/${mintedTx}`
+                                        `https://basescan.org/tx/${mintedTx}`
                                 )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -340,7 +347,7 @@ function App() {
                             <a
                                 href={`https://warpcast.com/~/compose?text=${encodeURIComponent(
                                     "Check out my new Top Listener Badge NFT! " +
-                                        `https://etherscan.io/tx/${mintedTx}`
+                                        `https://basescan.org/tx/${mintedTx}`
                                 )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
