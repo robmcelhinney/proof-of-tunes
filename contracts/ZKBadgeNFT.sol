@@ -8,7 +8,7 @@ import "./Verifier.sol";
 
 contract ZKBadgeNFT is ERC721URIStorage {
     Groth16Verifier public verifier;
-    mapping(bytes32 => bool) public usedProofs;
+    // Duplicate proof tracking removed.
     mapping(uint256 => string) public badgeMonth; // tokenId -> "March 2025"
     uint256 public tokenCounter;
 
@@ -28,13 +28,8 @@ contract ZKBadgeNFT is ERC721URIStorage {
         string memory svg, // provide raw SVG string
         string memory monthYear
     ) public {
-        // Prevent double claims.
-        bytes32 proofHash = keccak256(abi.encodePacked(publicSignals));
-        require(!usedProofs[proofHash], "Proof already used");
-
         // Verify the ZK proof.
         require(verifier.verifyProof(a, b, c, publicSignals), "Invalid proof");
-        usedProofs[proofHash] = true;
 
         // Convert SVG to a data URI.
         string memory svgBase64 = Base64.encode(bytes(svg));
@@ -47,7 +42,7 @@ contract ZKBadgeNFT is ERC721URIStorage {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "ProofofTunes Badge #',
+                        '{"name": "ProofofTunes #',
                         Strings.toString(tokenCounter),
                         '", "description": "Top Artists", "attributes": [',
                         '{"trait_type": "Artist 1", "value": "',
@@ -74,7 +69,6 @@ contract ZKBadgeNFT is ERC721URIStorage {
         _mint(msg.sender, tokenCounter);
         _setTokenURI(tokenCounter, finalTokenURI);
         badgeMonth[tokenCounter] = monthYear;
-
         tokenCounter++;
     }
 

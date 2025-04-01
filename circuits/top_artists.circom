@@ -1,17 +1,19 @@
 pragma circom 2.0.0;
 
 template TopArtists() {
+    // Private inputs.
     signal input artist1Hash;
     signal input artist2Hash;
     signal input artist3Hash;
 
-    signal output out1;
-    signal output out2;
-    signal output out3;
+    // Public outputs.
+    signal output artist1Pub;
+    signal output artist2Pub;
+    signal output artist3Pub;
 
-    out1 <== artist1Hash;
-    out2 <== artist2Hash;
-    out3 <== artist3Hash;
+    artist1Pub <== artist1Hash;
+    artist2Pub <== artist2Hash;
+    artist3Pub <== artist3Hash;
 }
 
 component main = TopArtists();
