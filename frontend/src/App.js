@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react"
 import * as snarkjs from "snarkjs"
 import { keccak256, toUtf8Bytes, BrowserProvider, Contract } from "ethers"
 import ZKBadgeNFT_ABI from "./abi/ZKBadgeNFT.json"
-import Confetti from "react-confetti"
+import confetti from "canvas-confetti"
 import { useWindowSize } from "@react-hook/window-size" // install this too!
 
 const SNARK_FIELD = BigInt(
@@ -83,8 +83,7 @@ function App() {
     const [notification, setNotification] = useState(null)
     const [mintedTx, setMintedTx] = useState(null)
     const [mintedNFT, setMintedNFT] = useState(null)
-    const [showConfetti, setShowConfetti] = useState(false)
-    const [width, height] = useWindowSize()
+    const [isGeneratingProof, setIsGeneratingProof] = useState(false)
 
     // Instead of reading from URL params, fetch verified Spotify data from your backend.
     useEffect(() => {
@@ -131,6 +130,7 @@ function App() {
     }
 
     const generateProof = async () => {
+        setIsGeneratingProof(true)
         const input = {
             artist1Hash: zkInput.hash1.toString(),
             artist2Hash: zkInput.hash2.toString(),
@@ -148,6 +148,7 @@ function App() {
             `${API_BASE}/zk/top_artists.wasm`,
             `${API_BASE}/zk/top_artists_final.zkey`
         )
+        setIsGeneratingProof(false)
 
         setProofData({ proof, publicSignals })
         setNotification({
@@ -236,8 +237,11 @@ function App() {
                 description: metadata.description,
                 attributes: metadata.attributes,
             })
-            setShowConfetti(true)
-            setTimeout(() => setShowConfetti(false), 5000)
+            confetti({
+                particleCount: 200,
+                spread: 90,
+                origin: { y: 0.6 },
+            })
 
             setTimeout(() => {
                 document
@@ -279,26 +283,39 @@ function App() {
                 </button>
             ) : (
                 <>
-                    {showConfetti && <Confetti width={width} height={height} />}
                     <div className="text-center mb-4">
-                        <h2 className="text-xl font-semibold mb-2">
+                        <h2 className="text-xl font-semibold mb-2 text-spotifyGreen font-spotify">
                             Your Top Artists (Past Year):
                         </h2>
-                        <ul className="space-y-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                             {[1, 2, 3].map((i) => (
-                                <li key={i} className="flex items-center">
+                                <div
+                                    key={i}
+                                    className="bg-gray-800 p-3 rounded shadow hover:scale-105 transition-transform backdrop-blur-lg bg-white/5 border border-white/10"
+                                >
                                     <img
                                         src={zkInput[`img${i}`]}
-                                        alt=""
-                                        className="h-12 w-12 rounded-full mr-3"
+                                        alt={`Artist ${i}`}
+                                        className="w-full h-32 object-cover rounded mb-2"
                                     />
-                                    <span className="text-lg">
+                                    <p className="text-center font-semibold text-white mb-2">
                                         {zkInput[`artist${i}`]}
-                                    </span>
-                                </li>
+                                    </p>
+                                    <a
+                                        href={`https://open.spotify.com/search/${encodeURIComponent(
+                                            zkInput[`artist${i}`]
+                                        )}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block text-center text-sm font-medium text-spotifyGreen hover:text-green-300 underline transition"
+                                    >
+                                        🎧 Listen on Spotify
+                                    </a>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
+
                     <button
                         onClick={generateProof}
                         className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded mb-4"
@@ -308,12 +325,42 @@ function App() {
                     {proofData && (
                         <button
                             onClick={mintBadge}
-                            className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded mb-4"
+                            className="bg-spotifyGreen hover:bg-green-500 text-black px-4 py-2 rounded-lg shadow-lg transition"
                         >
                             Mint ProofofTunes NFT
                         </button>
                     )}
                 </>
+            )}
+
+            {isGeneratingProof && (
+                <div className="w-full bg-gray-700 rounded h-3 mb-4">
+                    <div className="bg-purple-500 h-3 animate-pulse rounded w-1/2"></div>
+                </div>
+            )}
+
+            {proofData && !mintedNFT && (
+                <div className="bg-gray-800 rounded p-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-2 text-white">
+                        🎨 Preview Your NFT
+                    </h3>
+                    <img
+                        src={`data:image/svg+xml;base64,${btoa(
+                            unescape(
+                                encodeURIComponent(
+                                    generateSVG(
+                                        zkInput.artist1,
+                                        zkInput.artist2,
+                                        zkInput.artist3,
+                                        getCurrentMonthYear()
+                                    )
+                                )
+                            )
+                        )}`}
+                        alt="NFT Preview"
+                        className="w-64 h-auto mx-auto border border-gray-600 rounded"
+                    />
+                </div>
             )}
 
             {mintedTx && (

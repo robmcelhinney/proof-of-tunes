@@ -127,8 +127,6 @@ app.get("/api/top-artists", (req, res) => {
     }
 })
 
-const publicDir = path.join(__dirname, "public")
-
 app.get("/zk/top_artists.wasm", (req, res) => {
     res.setHeader("Content-Type", "application/wasm")
     res.sendFile(path.join(__dirname, "public", "zk", "top_artists.wasm"))
