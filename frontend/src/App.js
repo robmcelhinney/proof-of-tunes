@@ -150,7 +150,8 @@ function App() {
         })
     }
 
-    const BASE_SEPOLIA_CHAIN_ID = "0x14A34" // Hex of 84532
+    // const BASE_SEPOLIA_CHAIN_ID = "0x14A34" // Hex of 84532
+    const BASE_MAINNET_CHAIN_ID = "0x2105" // Hex of 8453
 
     const mintBadge = async () => {
         try {
@@ -159,10 +160,10 @@ function App() {
 
             // 1. Ensure user is connected to Base Sepolia
             const { chainId } = await provider.getNetwork()
-            if (chainId !== parseInt(BASE_SEPOLIA_CHAIN_ID, 16)) {
+            if (chainId !== parseInt(BASE_MAINNET_CHAIN_ID, 16)) {
                 await window.ethereum.request({
                     method: "wallet_switchEthereumChain",
-                    params: [{ chainId: BASE_SEPOLIA_CHAIN_ID }],
+                    params: [{ chainId: BASE_MAINNET_CHAIN_ID }],
                 })
             }
 
