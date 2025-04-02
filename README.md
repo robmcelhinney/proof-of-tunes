@@ -4,6 +4,8 @@
 
 Proof of Tunes lets users cryptographically prove their top Spotify artists — without revealing any personal data. Using zero-knowledge proofs (ZKPs), listeners can mint unique NFTs that attest to their musical taste, verified but private.
 
+Deployed on base.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -90,6 +92,12 @@ MIT
 
 ---
 
+## Screenshot
+
+![screenshot the site in use](img/screenshot.png)
+
+---
+
 ## 🌐 Live Demo
 
-Coming soon — or run locally at http://localhost:3000
+https://listener.robmcelhinney.com — or run locally at http://localhost:3000
