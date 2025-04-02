@@ -136,12 +136,6 @@ function App() {
             artist3Hash: zkInput.hash3.toString(),
         }
 
-        console.log("Expected public signals (hashes):", [
-            zkInput.hash1.toString(),
-            zkInput.hash2.toString(),
-            zkInput.hash3.toString(),
-        ])
-
         const { proof, publicSignals } = await snarkjs.groth16.fullProve(
             input,
             `${API_BASE}/zk/top_artists.wasm`,
@@ -196,16 +190,11 @@ function App() {
                 monthYear
             )
 
-            console.log("svg: ", svg)
-
             setNotification({
                 type: "info",
                 message: "Transaction submitted, waiting for confirmation...",
             })
             const publicSignalsBN = publicSignals.map((x) => BigInt(x))
-
-            console.log("publicSignalsBN (frontend):", publicSignalsBN)
-            console.log("Expected zkInput.artist1:", zkInput.artist1)
 
             const tx = await contract.mintBadge(
                 a,
@@ -256,7 +245,9 @@ function App() {
             console.error("Minting failed:", error)
             setNotification({
                 type: "error",
-                message: "Minting failed. Please check the console.",
+                message: `Minting failed: ${
+                    error?.reason || error?.message || "Unknown error"
+                }`,
             })
         }
     }
