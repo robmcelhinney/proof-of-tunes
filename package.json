@@ -2,8 +2,7 @@
   "name": "proof-of-tunes",
   "version": "1.0.0",
   "scripts": {
-    "start": "node backend/index.js",
-    "heroku-postbuild": "npm install --prefix backend && cd frontend && npm install && npm run build"
+    "start": "node backend/index.js"
   },
   "engines": {
     "node": "20.x"
