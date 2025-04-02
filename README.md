@@ -100,4 +100,4 @@ MIT
 
 ## 🌐 Live Demo
 
-https://listener.robmcelhinney.com — or run locally at http://localhost:3000
+https://proof-of-tunes.robmcelhinney.com — or run locally at http://localhost:3000
