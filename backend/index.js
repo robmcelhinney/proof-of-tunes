@@ -4,6 +4,7 @@ const axios = require("axios")
 const cors = require("cors")
 const dotenv = require("dotenv")
 const { ethers } = require("ethers")
+const path = require("path")
 
 dotenv.config()
 
@@ -19,15 +20,15 @@ app.use((req, res, next) => {
     res.setHeader(
         "Content-Security-Policy",
         "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; " +
+            `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'unsafe-eval' blob: ${process.env.FRONTEND_URI}; ` +
             "worker-src 'self' blob:; " +
-            "style-src 'self' 'unsafe-inline'; " +
+            `style-src 'self' 'unsafe-inline' ${process.env.FRONTEND_URI}; ` +
             "img-src 'self' data: https:; " +
-            "connect-src 'self' https://accounts.spotify.com https://api.spotify.com; " +
+            `connect-src 'self' https://accounts.spotify.com https://api.spotify.com ${process.env.FRONTEND_URI}; ` +
             "font-src 'self'; " +
             "media-src 'self'; " +
             "frame-src 'self'; " +
-            "object-src 'none';"
+            "object-src 'none';",
     )
     next()
 })
@@ -36,14 +37,14 @@ app.use(
     cors({
         origin: process.env.FRONTEND_URI,
         credentials: true,
-    })
+    }),
 )
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
-    })
+    }),
 )
 
 app.get("/login", (req, res) => {
@@ -51,7 +52,7 @@ app.get("/login", (req, res) => {
     const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${
         process.env.SPOTIFY_CLIENT_ID
     }&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(
-        process.env.REDIRECT_URI
+        process.env.REDIRECT_URI,
     )}`
     res.redirect(authUrl)
 })
@@ -70,7 +71,11 @@ app.get("/callback", async (req, res) => {
                 client_id: process.env.SPOTIFY_CLIENT_ID,
                 client_secret: process.env.SPOTIFY_CLIENT_SECRET,
             }),
-            { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            },
         )
         const access_token = tokenRes.data.access_token
 
@@ -83,7 +88,7 @@ app.get("/callback", async (req, res) => {
         // Fetch top artists.
         const topRes = await axios.get(
             "https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=3",
-            { headers: { Authorization: `Bearer ${access_token}` } }
+            { headers: { Authorization: `Bearer ${access_token}` } },
         )
         const artists = topRes.data.items || []
         if (artists.length < 3) {
@@ -103,7 +108,7 @@ app.get("/callback", async (req, res) => {
         // Compute a message hash over the three artist names.
         const messageHash = ethers.solidityPackedKeccak256(
             ["string", "string", "string"],
-            [payload.artist1, payload.artist2, payload.artist3]
+            [payload.artist1, payload.artist2, payload.artist3],
         )
         // Sign the hash with the backend private key.
         const wallet = new ethers.Wallet(process.env.BACKEND_PRIVATE_KEY)

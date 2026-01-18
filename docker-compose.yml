@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    ports:
+      - "3002:3000"
