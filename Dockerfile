@@ -13,6 +13,10 @@ RUN npm install --production
 # Copy the rest of the application code
 COPY . .
 
+# Install backend dependencies
+WORKDIR /app/backend
+RUN npm install --production
+
 # Install frontend dependencies and build
 WORKDIR /app/frontend
 RUN npm install
