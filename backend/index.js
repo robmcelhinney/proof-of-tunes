@@ -17,6 +17,10 @@ express.static.mime.define({
 })
 
 app.use((req, res, next) => {
+    const backendUrl =
+        process.env.NODE_ENV === "development" ? "http://localhost:5000" : ""
+    const connectSrc =
+        `'self' https://accounts.spotify.com https://api.spotify.com ${process.env.FRONTEND_URI} ${backendUrl}`.trim()
     res.setHeader(
         "Content-Security-Policy",
         "default-src 'self'; " +
@@ -24,7 +28,7 @@ app.use((req, res, next) => {
             "worker-src 'self' blob:; " +
             `style-src 'self' 'unsafe-inline' ${process.env.FRONTEND_URI}; ` +
             "img-src 'self' data: https:; " +
-            `connect-src 'self' https://accounts.spotify.com https://api.spotify.com ${process.env.FRONTEND_URI}; ` +
+            `connect-src ${connectSrc}; ` +
             "font-src 'self'; " +
             "media-src 'self'; " +
             "frame-src 'self'; " +

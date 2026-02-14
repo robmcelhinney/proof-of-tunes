@@ -7,7 +7,7 @@ import ZKBadgeNFT_ABI from "./abi/ZKBadgeNFT.json"
 import confetti from "canvas-confetti"
 
 const SNARK_FIELD = BigInt(
-    "21888242871839275222246405745257275088548364400416034343698204186575808495617"
+    "21888242871839275222246405745257275088548364400416034343698204186575808495617",
 )
 function stringToHash(s) {
     return BigInt(keccak256(toUtf8Bytes(s))) % SNARK_FIELD
@@ -38,7 +38,7 @@ function generateTokenSVG(a1, a2, a3, monthYear) {
         ],
     }
     const metadataBase64 = window.btoa(
-        unescape(encodeURIComponent(JSON.stringify(metadata)))
+        unescape(encodeURIComponent(JSON.stringify(metadata))),
     )
     return `data:application/json;base64,${metadataBase64}`
 }
@@ -88,12 +88,9 @@ function App() {
     useEffect(() => {
         async function fetchTopArtists() {
             try {
-                const response = await fetch(
-                    "http://localhost:5000/api/top-artists",
-                    {
-                        credentials: "include", // send session cookies
-                    }
-                )
+                const response = await fetch(`${API_BASE}/api/top-artists`, {
+                    credentials: "include", // send session cookies
+                })
                 if (response.ok) {
                     const data = await response.json()
                     const { artist1, artist2, artist3, img1, img2, img3 } = data
@@ -113,7 +110,7 @@ function App() {
                     })
                 } else {
                     console.error(
-                        "Not logged in or failed to fetch top artists."
+                        "Not logged in or failed to fetch top artists.",
                     )
                 }
             } catch (err) {
@@ -139,7 +136,7 @@ function App() {
         const { proof, publicSignals } = await snarkjs.groth16.fullProve(
             input,
             `${API_BASE}/zk/top_artists.wasm`,
-            `${API_BASE}/zk/top_artists_final.zkey`
+            `${API_BASE}/zk/top_artists_final.zkey`,
         )
         setIsGeneratingProof(false)
 
@@ -172,7 +169,7 @@ function App() {
             const contract = new Contract(
                 CONTRACT_ADDRESS,
                 ZKBadgeNFT_ABI.abi,
-                signer
+                signer,
             )
             const { proof, publicSignals } = proofData
 
@@ -188,7 +185,7 @@ function App() {
                 zkInput.artist1,
                 zkInput.artist2,
                 zkInput.artist3,
-                monthYear
+                monthYear,
             )
 
             setNotification({
@@ -206,7 +203,7 @@ function App() {
                 zkInput.artist2,
                 zkInput.artist3,
                 svg,
-                monthYear
+                monthYear,
             )
             console.log("Transaction submitted:", tx.hash)
             const receipt = await tx.wait()
@@ -216,7 +213,7 @@ function App() {
                 zkInput.artist1,
                 zkInput.artist2,
                 zkInput.artist3,
-                monthYear
+                monthYear,
             )
             const base64 = siteSVG.split(",")[1]
             const metadata = JSON.parse(atob(base64))
@@ -294,7 +291,7 @@ function App() {
                                     </p>
                                     <a
                                         href={`https://open.spotify.com/search/${encodeURIComponent(
-                                            zkInput[`artist${i}`]
+                                            zkInput[`artist${i}`],
                                         )}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -343,10 +340,10 @@ function App() {
                                         zkInput.artist1,
                                         zkInput.artist2,
                                         zkInput.artist3,
-                                        getCurrentMonthYear()
-                                    )
-                                )
-                            )
+                                        getCurrentMonthYear(),
+                                    ),
+                                ),
+                            ),
                         )}`}
                         alt="NFT Preview"
                         className="w-64 h-auto mx-auto border border-gray-600 rounded"
@@ -374,7 +371,7 @@ function App() {
                             <a
                                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
                                     "Check out my new Top Listener Badge NFT! " +
-                                        `https://basescan.org/tx/${mintedTx}`
+                                        `https://basescan.org/tx/${mintedTx}`,
                                 )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -385,7 +382,7 @@ function App() {
                             <a
                                 href={`https://warpcast.com/~/compose?text=${encodeURIComponent(
                                     "Check out my new Top Listener Badge NFT! " +
-                                        `https://basescan.org/tx/${mintedTx}`
+                                        `https://basescan.org/tx/${mintedTx}`,
                                 )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
